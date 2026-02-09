@@ -1,5 +1,10 @@
 import { redisClient } from "../config/redis.js";
 
-const storeRefreshToken = async(userId, refreshToken) => {
-    
+export const storeRefreshToken = async (userId, refreshToken) => {
+  await redisClient.set(
+    `refresh_token:${userId}`,
+    refreshToken,
+    "EX",
+    7 * 24 * 60 * 60,
+  );
 };

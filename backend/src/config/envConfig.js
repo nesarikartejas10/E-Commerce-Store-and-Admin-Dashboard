@@ -9,6 +9,7 @@ const _config = {
   refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
   accessTokenExpiry: process.env.ACCESS_TOKEN_EXPIRY,
   refreshTokenExpiry: process.env.REFRESH_TOKEN_EXPIRY,
+  nodeENV: process.env.NODE_ENV,
 };
 
 export const config = Object.freeze(_config);
