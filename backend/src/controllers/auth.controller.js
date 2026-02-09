@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import generateTokens from "../services/token.service.js";
 
 const signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -26,6 +27,7 @@ const signup = async (req, res) => {
     }
 
     const user = await User.create({ name, email, password });
+    const { acceessToken, refreshToken } = generateTokens(user._id);
 
     res.status(201).json({ user, message: "User created successfully" });
   } catch (error) {
