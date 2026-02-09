@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import { storeRefreshToken } from "../services/redis.service.js";
 import generateTokens from "../services/token.service.js";
+import { setCookies } from "../utils/cookie.js";
 
 const signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -28,12 +29,25 @@ const signup = async (req, res) => {
     }
 
     const user = await User.create({ name, email, password });
-    const { acceessToken, refreshToken } = generateTokens(user._id);
+    const { accessToken, refreshToken } = generateTokens(user._id);
 
     //store refresh token in redis
     await storeRefreshToken(user._id, refreshToken);
 
-    res.status(201).json({ user, message: "User created successfully" });
+    //set cookies
+    setCookies(res, accessToken, refreshToken);
+
+    res
+      .status(201)
+      .json({
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+        message: "User created successfully",
+      });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
