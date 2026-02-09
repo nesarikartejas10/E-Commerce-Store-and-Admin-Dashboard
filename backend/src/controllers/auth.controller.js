@@ -1,7 +1,10 @@
+import { config } from "../config/envConfig.js";
+import { redisClient } from "../config/redis.js";
 import User from "../models/user.model.js";
 import { storeRefreshToken } from "../services/redis.service.js";
 import generateTokens from "../services/token.service.js";
 import { setCookies } from "../utils/cookie.js";
+import jwt from "jsonwebtoken";
 
 const signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -37,17 +40,15 @@ const signup = async (req, res) => {
     //set cookies
     setCookies(res, accessToken, refreshToken);
 
-    res
-      .status(201)
-      .json({
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        },
-        message: "User created successfully",
-      });
+    res.status(201).json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      message: "User created successfully",
+    });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -55,6 +56,22 @@ const signup = async (req, res) => {
 
 const login = async () => {};
 
-const logout = async () => {};
+const logout = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    if (refreshToken) {
+      const decoded = jwt.verify(refreshToken, config.refreshTokenSecret);
+      await redisClient.del(`refresh_token:${decoded.userId}`);
+
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+      res.json({ message: "Logged out successfully" });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
+  }
+};
 
 export { signup, login, logout };
