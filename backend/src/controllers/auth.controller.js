@@ -54,7 +54,32 @@ const signup = async (req, res) => {
   }
 };
 
-const login = async () => {};
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+
+    if (user && (await user.comparePassword(password))) {
+      const { accessToken, refreshToken } = generateTokens(user._id);
+      await storeRefreshToken(user._id, refreshToken);
+      setCookies(res, accessToken, refreshToken);
+
+      res.status(200).json({
+        message: "User logged in",
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      });
+    } else {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
 const logout = async (req, res) => {
   try {
@@ -65,7 +90,7 @@ const logout = async (req, res) => {
 
       res.clearCookie("accessToken");
       res.clearCookie("refreshToken");
-      res.json({ message: "Logged out successfully" });
+      res.status(200).json({ message: "Logged out successfully" });
     }
   } catch (error) {
     return res
