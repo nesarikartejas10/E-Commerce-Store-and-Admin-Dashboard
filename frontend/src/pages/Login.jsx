@@ -1,6 +1,8 @@
 import { Link } from "react-router";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
+  const {} = useForm();
   return (
     <section className="h-screen flex items-center justify-center">
       <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
