@@ -1,14 +1,10 @@
-import app from "./src/app.js";
-import connectDB from "./src/config/db.js";
-import { config } from "./src/config/envConfig.js";
+import app from "./src/app";
 
-const startServer = () => {
-  const PORT = config.port || 3000;
-
-  app.listen(PORT, async () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-    await connectDB();
+const PORT = 5000;
+function startServer() {
+  app.listen(PORT, () => {
+    console.log(`Server is listening on http://localhost:${PORT}`);
   });
-};
+}
 
 startServer();
