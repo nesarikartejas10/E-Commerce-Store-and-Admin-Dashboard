@@ -1,4 +1,3 @@
-import React from "react";
 import { isRouteErrorResponse, Link, useRouteError } from "react-router";
 
 const PageNotFound = () => {
@@ -23,7 +22,7 @@ const PageNotFound = () => {
 
       <Link
         to="/"
-        className="mt-6 px-6 py-3 bg-cyan-800 text-white rounded-lg hover:bg-gray-500 hover:text-black transition duration-300"
+        className="mt-6 px-6 py-3 bg-[#262629] text-white rounded-lg hover:bg-gray-500 hover:text-black transition duration-300"
       >
         Go Back Home
       </Link>
