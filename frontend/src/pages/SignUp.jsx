@@ -89,7 +89,9 @@ const SignUp = () => {
     >
       <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
         <legend className="fieldset-legend text-center text-2xl">SignUp</legend>
-
+        {errors.global && (
+          <p className="text-red-500 text-sm">{errors.global}</p>
+        )}
         <label className="label">Name</label>
         <input
           type="text"
@@ -123,10 +125,6 @@ const SignUp = () => {
         />
         {errors.password && (
           <p className="text-red-500 text-sm">{errors.password}</p>
-        )}
-
-        {errors.global && (
-          <p className="text-red-500 text-sm">{errors.global}</p>
         )}
 
         <button className="btn btn-neutral mt-4" disabled={loading}>
