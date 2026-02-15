@@ -2,6 +2,7 @@ import { toast } from "react-toastify";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { api } from "../api/axios";
+import PageLoader from "../components/PageLoader";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -54,25 +55,26 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors({});
+    setErrors({ name: "", email: "", password: "", global: "" });
 
     if (!validateSignup()) return;
 
     try {
       setLoading(true);
       const response = await api.post("/auth/signup", formData);
-      toast.success(response?.data?.message);
 
       setFormData({
         name: "",
         email: "",
         password: "",
       });
-      setErrors({});
+      setErrors({ name: "", email: "", password: "", global: "" });
+
+      toast.success(response?.data?.message);
 
       setTimeout(() => {
         navigate("/login");
-      }, 1500);
+      }, 500);
     } catch (error) {
       setErrors({
         global: error.response?.data?.message || "Something went wrong",
@@ -82,6 +84,10 @@ const SignUp = () => {
     }
   };
 
+  if (loading) {
+    return <PageLoader />;
+  }
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -90,7 +96,7 @@ const SignUp = () => {
       <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
         <legend className="fieldset-legend text-center text-2xl">SignUp</legend>
         {errors.global && (
-          <p className="text-red-500 text-sm">{errors.global}</p>
+          <p className="text-red-500 text-sm text-center">{errors.global}</p>
         )}
         <label className="label">Name</label>
         <input
@@ -127,9 +133,7 @@ const SignUp = () => {
           <p className="text-red-500 text-sm">{errors.password}</p>
         )}
 
-        <button className="btn btn-neutral mt-4" disabled={loading}>
-          {loading ? "Creating..." : "Create Account"}
-        </button>
+        <button className="btn btn-neutral mt-4">Create Account</button>
 
         <div className="text-center pt-5 text-[14px]">
           <span>You already have an account?</span>
